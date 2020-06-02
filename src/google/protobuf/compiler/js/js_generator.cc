@@ -441,7 +441,7 @@ std::string GetEnumFileName(const GeneratorOptions& options,
 
 // Returns the message/response ID, if set.
 std::string GetMessageId(const Descriptor* desc) {
-  return std::string();
+  return desc->full_name();
 }
 
 bool IgnoreExtensionField(const FieldDescriptor* field) {
