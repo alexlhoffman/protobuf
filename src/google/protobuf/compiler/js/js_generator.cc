@@ -123,14 +123,15 @@ std::string GetJSFilename(const GeneratorOptions& options,
 
 // Given a filename like foo/bar/baz.proto, returns the root directory
 // path ../../
-std::string GetRootPath(const std::string& from_filename,
+std::string GetRootPath(const GeneratorOptions& options,
+                        const std::string& from_filename,
                         const std::string& to_filename) {
   if (to_filename.find("google/protobuf") == 0) {
     // Well-known types (.proto files in the google/protobuf directory) are
     // assumed to come from the 'google-protobuf' npm package.  We may want to
     // generalize this exception later by letting others put generated code in
     // their own npm packages.
-    return "google-protobuf/";
+    return options.well_known_types_prefix;
   }
 
   size_t slashes = std::count(from_filename.begin(), from_filename.end(), '/');
@@ -3527,6 +3528,8 @@ bool GeneratorOptions::ParseFromOptions(
         return false;
       }
       annotate_code = true;
+    } else if (options[i].first == "well_known_types_prefix") {
+      well_known_types_prefix = options[i].second;
     } else {
       // Assume any other option is an output directory, as long as it is a bare
       // `key` rather than a `key=value` option.
@@ -3659,7 +3662,8 @@ void Generator::GenerateFile(const GeneratorOptions& options,
           "var $alias$ = require('$file$');\n"
           "goog.object.extend(proto, $alias$);\n",
           "alias", ModuleAlias(name), "file",
-          GetRootPath(file->name(), name) + GetJSFilename(options, name));
+          GetRootPath(options, file->name(), name) +
+                      GetJSFilename(options, name));
     }
   }
 

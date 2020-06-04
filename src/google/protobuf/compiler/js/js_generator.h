@@ -75,11 +75,14 @@ struct GeneratorOptions {
     kImportEs6,             // import { member } from ''
   } import_style;
 
+  std::string well_known_types_prefix;
+
   GeneratorOptions()
       : output_dir("."),
         namespace_prefix(""),
         binary(false),
         import_style(kImportClosure),
+        well_known_types_prefix("google-protobuf/"),
         add_require_for_enums(false),
         testonly(false),
         library(""),
